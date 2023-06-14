@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NextButton from "./NextButton";
 import { DBlist } from "../DBList";
 
-import { Stack, Box, Text, Button, VStack, Heading } from "@chakra-ui/react";
+import { Stack, Box, Text,  VStack, Heading } from "@chakra-ui/react";
 
 export const SelectDB = () => {
   return (

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Stack } from "@chakra-ui/react";
 import { DBItem } from "./DBItem";
+import { useDB } from "@/contexts/common/DBProvider";
 
 const itemsData = [
   {
@@ -22,10 +23,10 @@ const itemsData = [
 
 export const DBlist = () => {
   const [selected, setSelected] = useState(false);
-  const [selectedId, setSelectedId] = useState(0);
+  const { db, setDb } = useDB();
   return (
     <Stack spacing={8} direction="row" align="center">
-      {itemsData.map((item, i) => {
+      {itemsData.map((item) => {
         return (
           <DBItem
             key={item.id}
@@ -34,7 +35,7 @@ export const DBlist = () => {
             isSelected={selected}
             onClick={() => {
               setSelected(true);
-              setSelectedId(i);
+              setDb(item.dbName)
             }}
           />
         );

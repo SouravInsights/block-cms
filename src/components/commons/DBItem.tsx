@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Image, Stack } from "@chakra-ui/react";
-import { useDB } from "@/contexts/common/DBProvider";
 
 type Props = {
   dbName: string;
@@ -16,12 +15,6 @@ export const DBItem = ({
   onClick,
   ...props
 }: Props) => {
-  const { db, setDb } = useDB();
-  console.log("db from dbitem:", dbName);
-  useEffect(() => {
-    setDb(dbName);
-  }, [dbName, setDb]);
-
   return (
     <Stack spacing={8} direction="row" align="center" {...props}>
       <Button
