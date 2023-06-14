@@ -12,9 +12,6 @@ type Props = {
 };
 
 export const NavBar = ({ connectWalletClick, isConnected, address }: Props) => {
-  // const { disconnect } = useDisconnect();
-  // const { data: ensName } = useEnsName({ address })
-
   return (
     <HStack
       as="nav"
@@ -23,20 +20,13 @@ export const NavBar = ({ connectWalletClick, isConnected, address }: Props) => {
       py="14px"
       mx="auto"
       top="20px"
-      position="sticky"
       align="center"
       justify="space-between"
-      bg="white"
-      border="4px"
-      borderColor="#5a43cc"
-      color="white"
       borderRadius="10px"
-      boxShadow="0px 10px 20px rgba(0, 0, 0, 0.05);"
       display="flex"
-      zIndex={4}
     >
-      <Heading color="#5a43cc" fontSize="35px" fontWeight="bold">
-        Block CMS
+      <Heading color="#000000" fontSize="35px" fontWeight="bold">
+        BlockCMS
       </Heading>
       {isConnected ? (
         <HStack spacing={4}>
