@@ -1,5 +1,6 @@
 import { Polybase } from "@polybase/client";
 
-export const polybaseDb = new Polybase({
-  baseURL: 'https://testnet.polybase.xyz/v0',
+export const polybase = new Polybase({
+  defaultNamespace: "block-cms",
+  baseURL: `https://testnet.polybase.xyz/v0`,
 });

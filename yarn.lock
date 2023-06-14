@@ -2213,6 +2213,13 @@
     picocolors "^1.0.0"
     tslib "^2.5.0"
 
+"@polybase/auth@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@polybase/auth/-/auth-0.6.1.tgz#2f249bf42a8edb295dffe74a61d009f2c5fb4e2f"
+  integrity sha512-2/G2+pygGCpx8YDKVSyBEKYGKKDUYDJ32HznnaYfCZg/LxMwMEAaNt0UMVeEf4MkZG8ITeDCNzwCrbamDGZRpg==
+  dependencies:
+    penpal "^6.2.2"
+
 "@polybase/client@^0.6.1":
   version "0.6.1"
   resolved "https://registry.yarnpkg.com/@polybase/client/-/client-0.6.1.tgz#79efe50ab5a6669f437182432d46ea9eccfe0335"
@@ -2235,6 +2242,11 @@
   version "0.6.0"
   resolved "https://registry.yarnpkg.com/@polybase/polylang/-/polylang-0.6.0.tgz#bd8dcb1b6275f9a3e4c9e208be2f7f18da07f955"
   integrity sha512-yk2JbnNkJDKs2Gnjedra7H1b8H7MCZKaOlo3n+OjjcTlqsZq8Iz472hE0umxDi74zxcsMnIb/qsR6oj6fGKrpw==
+
+"@polybase/react@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@polybase/react/-/react-0.6.1.tgz#cb480faf3ff7f6a0b42c4346e64d1e94e729aa56"
+  integrity sha512-mt17guto/Nb8iArX6AfkWPyX2qli4yCObcxVStejxgzRdXQhBiXWrq8V0mmrR+ncdC6zocQlX6sAae56YAK+0Q==
 
 "@polybase/util@^0.6.1":
   version "0.6.1"
@@ -2704,6 +2716,11 @@
     "@types/express-serve-static-core" "^4.17.33"
     "@types/qs" "*"
     "@types/serve-static" "*"
+
+"@types/js-cookie@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@types/js-cookie/-/js-cookie-3.0.3.tgz#d6bfbbdd0c187354ca555213d1962f6d0691ff4e"
+  integrity sha512-Xe7IImK09HP1sv2M/aI+48a20VX+TdRJucfq4vfRVy6nWN8PYPOEnlMRSgxJAgYQIXJVL8dZ4/ilAM7dWNaOww==
 
 "@types/json5@^0.0.29":
   version "0.0.29"
@@ -5532,6 +5549,11 @@ jet-logger@1.2.2:
   dependencies:
     colors "1.3.0"
 
+js-cookie@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-3.0.5.tgz#0b7e2fd0c01552c58ba86e0841f94dc2557dcdbc"
+  integrity sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==
+
 js-sha3@0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
@@ -6201,6 +6223,11 @@ path-type@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-4.0.0.tgz#84ed01c0a7ba380afe09d90a8c180dcd9d03043b"
   integrity sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==
+
+penpal@^6.2.2:
+  version "6.2.2"
+  resolved "https://registry.yarnpkg.com/penpal/-/penpal-6.2.2.tgz#20a0a0592881a959e8c87116d854f9528b1aa601"
+  integrity sha512-RQD7hTx14/LY7QoS3tQYO3/fzVtwvZI+JeS5udgsu7FPaEDjlvfK9HBcme9/ipzSPKnrxSgacI9PI7154W62YQ==
 
 picocolors@^1.0.0:
   version "1.0.0"
