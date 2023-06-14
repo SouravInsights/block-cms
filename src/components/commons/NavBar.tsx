@@ -1,8 +1,9 @@
 import React from "react";
 import { HStack, Heading, Button } from "@chakra-ui/react";
 import { useDisconnect, useEnsName } from "wagmi";
-import { truncateAddress } from "../../utils/general";
+import { truncateAddress } from "../../utils/common";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { NavLogin } from "./NavLogin";
 
 type Props = {
   connectWalletClick?: () => void;
@@ -52,7 +53,7 @@ export const NavBar = ({ connectWalletClick, isConnected, address }: Props) => {
           </Button>
         </HStack>
       ) : (
-        <ConnectButton accountStatus="address" chainStatus="icon" />
+        <NavLogin />
       )}
     </HStack>
   );

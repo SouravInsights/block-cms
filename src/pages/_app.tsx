@@ -11,6 +11,10 @@ import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
+import { auth, polybase } from "../config"
+import { PolybaseProvider, AuthProvider } from '@polybase/react'
+import { UserProvider } from '@/contexts/common/UserProvider';
+
 const inter = Inter({ subsets: ["latin"] });
 const { chains, publicClient } = configureChains(
   [mainnet, polygon, optimism, arbitrum],
@@ -21,7 +25,7 @@ const { chains, publicClient } = configureChains(
 );
 
 const { connectors } = getDefaultWallets({
-  appName: "My RainbowKit App",
+  appName: "BlockCMS App",
   projectId: "YOUR_PROJECT_ID",
   chains,
 });
@@ -34,17 +38,21 @@ const wagmiConfig = createConfig({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <ChakraProvider>
-        <main className={inter.className}>
-          <RainbowKitProvider chains={chains}>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </RainbowKitProvider>
-        </main>
-      </ChakraProvider>
-    </WagmiConfig>
+    <PolybaseProvider polybase={polybase}>
+      <AuthProvider polybase={polybase} auth={auth}>
+        <WagmiConfig config={wagmiConfig}>
+          <ChakraProvider>
+            <main className={inter.className}>
+              <UserProvider>
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              </UserProvider>
+            </main>
+          </ChakraProvider>
+        </WagmiConfig>
+      </AuthProvider>
+    </PolybaseProvider>
   );
 }
 

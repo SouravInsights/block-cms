@@ -1,5 +1,6 @@
 import { Box, Heading, Container, Text, Stack } from "@chakra-ui/react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { NavLogin } from "./NavLogin";
 
 export default function CallToActionWithAnnotation() {
   return (
@@ -29,7 +30,7 @@ export default function CallToActionWithAnnotation() {
             alignSelf={"center"}
             position={"relative"}
           >
-            <ConnectButton accountStatus="address" chainStatus="icon" />
+            <NavLogin />
           </Stack>
         </Stack>
       </Container>
