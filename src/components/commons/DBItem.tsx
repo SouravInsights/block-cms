@@ -5,7 +5,7 @@ type Props = {
   dbName: string;
   itemIcon: string;
   isSelected: boolean;
-  onClick?: () => void;
+  onClick: () => void;
 };
 
 export const DBItem = ({

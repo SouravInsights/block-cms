@@ -22,7 +22,7 @@ export default function App() {
 
   return (
     <Box>
-      {isConnected ? <SelectDB /> : <Welcome />}
+      <Welcome />
     </Box>
   )
 }
