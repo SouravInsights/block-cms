@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
 } from '@chakra-ui/react'
 import { useIsAuthenticated } from '@polybase/react'
@@ -11,12 +12,14 @@ export const NavLogin = () => {
   if (isLoggedInLoading) return null
 
   if (!isLoggedIn) {
-    return <Button width='100%' onClick={() => signIn()}>Login</Button>
+    return <Box><Button width='100%' onClick={() => signIn()}>Login</Button></Box>
   }
 
   return (
-    <Button width='100%' onClick={() => signOut()}>
+    <Box>
+      <Button width='100%' onClick={() => signOut()}>
       Logout
-    </Button>
+      </Button>
+    </Box>
   )
 }

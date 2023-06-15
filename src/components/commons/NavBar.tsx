@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Heading, Button } from "@chakra-ui/react";
+import { HStack, Heading, Button, Box } from "@chakra-ui/react";
 import { useDisconnect, useEnsName } from "wagmi";
 import { truncateAddress } from "../../utils/common";
 import { ConnectButton } from "@rainbow-me/rainbowkit";

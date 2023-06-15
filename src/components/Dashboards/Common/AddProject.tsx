@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Stack, Box, Text, Button, Image, Icon } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { ProjectModal } from "../ProjectModal";
+import { ProjectModal } from "./ProjectModal";
 
 export const AddProject = () => {
   const [active, setActive] = useState(false);
