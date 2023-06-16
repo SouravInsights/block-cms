@@ -52,6 +52,34 @@ const PostSchemaFileds = [
   }
 ]
 
+/* Test cases for the `generateGraphqlSchema` function */
+  // Test Case 1: Invalid Polybase schema (missing collection name)
+  const polybaseSchema1 = `
+    @public
+    collection {
+      id: string;
+      name: string;
+    }
+  `;
+
+  // Test Case 2: Invalid Polybase schema (no fields found)
+  const polybaseSchema2 = `
+    @public
+    collection Post {
+    }
+  `;
+
+  // Test Case 3: Invalid Polybase schema (missing field name or type)
+  const polybaseSchema3 = `
+    @public
+    collection Post {
+      id: string;
+      : string;
+      name: string;
+      description: ;
+    }
+  `;
+
 const Dashboard = () => {
   const polybase = usePolybase();
   const { data, error, loading } =
@@ -60,7 +88,26 @@ const Dashboard = () => {
   const polybaseSchema = generatePolybaseSchema('Post', PostSchemaFileds);
   console.log('polybaseSchema:', polybaseSchema);
 
-  console.log('gql schema:', generateGraphQLSchema(polybaseSchema));
+  try {
+    const graphqlSchema = generateGraphQLSchema(polybaseSchema);
+    console.log('correct gnnnql schema:', graphqlSchema);
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  try {
+    const graphqlSchema = generateGraphQLSchema(polybaseSchema1);
+    console.log('test case 1:', graphqlSchema);
+  } catch (error) {
+    console.error(error.message);
+  }
+
+  try {
+    const graphqlSchema = generateGraphQLSchema(polybaseSchema2);
+    console.log('test case 2:', graphqlSchema);
+  } catch (error) {
+    console.error(error.message);
+  }
 
   return (
     <Box>

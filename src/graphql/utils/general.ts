@@ -25,19 +25,44 @@ export const generateGraphQLTypeDefs = (schema: any) => {
 };
 
 export function generateGraphQLSchema(polybaseSchema: string): string {
-  // Extract collection name
+  // Input validation: Ensure polybaseSchema is a string
+  if (typeof polybaseSchema !== 'string') {
+    throw new Error('Polybase schema must be a string');
+  }
+
+  // Extract collection name using regex
   const collectionName = polybaseSchema.match(/collection (\w+)/)?.[1];
 
-  // Extract fields
-  const fields = (polybaseSchema.match(/(\w+): (\w+);/g) || [])
-    .map((field: string) => {
-      const [name, type] = field.replace(';', '').split(': ');
-      return { name, type };
-    });
+  // Input validation: Ensure collectionName is present
+  if (!collectionName) {
+    throw new Error('Invalid Polybase schema: Missing collection name');
+  }
 
-  // Generate GraphQL types
+  /* 
+    - Extract fields using regex and matchAll
+    - Uses a regular expression to match and extract all 
+    occurrences of fields in the Polybase schema
+  */
+  const fieldsMatch = polybaseSchema.match(/(\w+): (\w+);/g) || [];
+  const fields = fieldsMatch.map((field: string) => {
+    /* Removes the semicolon from the field declaration and splits it into 
+      an array containing the field name and type. 
+    */
+    const [name, type] = field.replace(';', '').split(': ');
+    return { name, type };
+  });
+
+  /* Generate GraphQL type definitions 
+    It iiterates over the extracted fields and generates the corresponding GraphQL 
+    field definitions based on the field names and types. The switch statement maps Polybase 
+    types to GraphQL types.
+  */
   const typeDefs = `type ${collectionName} {\n${fields
     .map((field: any) => {
+      // Input validation: Ensure field name and type are present
+      if (!field.name || !field.type) {
+        throw new Error('Invalid Polybase schema: Missing field name or type');
+      }
       let gqlType;
       switch (field.type) {
         case 'string':
