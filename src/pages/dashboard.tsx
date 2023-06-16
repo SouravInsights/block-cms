@@ -4,6 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { usePolybase, useDocument, useCollection } from "@polybase/react";
 import { generatePolybaseSchema } from '@/utils';
+import { generateGraphQLSchema } from '@/graphql/utils';
 
 const PostSchemaFileds = [
   {
@@ -19,7 +20,7 @@ const PostSchemaFileds = [
   },
   {
     "id": "2",
-    "content_type_id": "contentTypeId1",
+    "content_type_id": "1",
     "name": "Slug",
     "api_id": "slug",
     "type": "string",
@@ -44,7 +45,7 @@ const PostSchemaFileds = [
     "content_type_id": "1",
     "name": "Author",
     "api_id": "author",
-    "type": "reference",
+    "type": "Author",
     "field_options": {
       "required": true
     }
@@ -56,11 +57,10 @@ const Dashboard = () => {
   const { data, error, loading } =
     useCollection(polybase.collection("users"));
 
-  console.log('user collection:', data?.data);
-
-
   const polybaseSchema = generatePolybaseSchema('Post', PostSchemaFileds);
   console.log('polybaseSchema:', polybaseSchema);
+
+  console.log('gql schema:', generateGraphQLSchema(polybaseSchema));
 
   return (
     <Box>
