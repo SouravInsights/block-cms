@@ -32,8 +32,14 @@ export function isSchemaMismatch(collections: CollectionRecordResponse<Collectio
 }
 
 export function generatePolybaseSchema(collectionName: string, fields: any) {
-  let fieldDefinitions = fields
-    .map((field: any) => `${field.name}: ${field.type};`)
+  const fieldDefinitions = fields
+    .map((field: any) => field.field_options.required ? `${field.api_id}: ${field.type};` : `${field.api_id}?: ${field.type};`)
+    .join("\n      ");
+    
+  const constructorParams = fields
+    .map((field: any, i: number) => 
+      i === fields.length - 1 ? `${field.api_id}: ${field.type}` : `${field.api_id}: ${field.type},`
+    )
     .join("\n    ");
 
   return `
@@ -42,8 +48,9 @@ export function generatePolybaseSchema(collectionName: string, fields: any) {
       id: string;
       ${fieldDefinitions}
 
-      constructor (id: string) {
+      constructor (id: string, ${constructorParams}) {
         this.id = id;
+        ${fieldDefinitions}
       }
     }
   `;

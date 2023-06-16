@@ -3,6 +3,53 @@ import {
   Text
 } from '@chakra-ui/react';
 import { usePolybase, useDocument, useCollection } from "@polybase/react";
+import { generatePolybaseSchema } from '@/utils';
+
+const PostSchemaFileds = [
+  {
+    "id": "1",
+    "content_type_id": "1",
+    "name": "Title",
+    "api_id": "title",
+    "type": "string",
+    "field_options": {
+      "required": true,
+      "max_length": 100
+    }
+  },
+  {
+    "id": "2",
+    "content_type_id": "contentTypeId1",
+    "name": "Slug",
+    "api_id": "slug",
+    "type": "string",
+    "field_options": {
+      "required": false,
+      "max_length": 14
+    }
+  },
+  {
+    "id": "3",
+    "content_type_id": "1",
+    "name": "Content",
+    "api_id": "content",
+    "type": "string",
+    "field_options": {
+      "required": true,
+      "max_length": 5000
+    }
+  },
+  {
+    "id": "4",
+    "content_type_id": "1",
+    "name": "Author",
+    "api_id": "author",
+    "type": "reference",
+    "field_options": {
+      "required": true
+    }
+  }
+]
 
 const Dashboard = () => {
   const polybase = usePolybase();
@@ -10,6 +57,10 @@ const Dashboard = () => {
     useCollection(polybase.collection("users"));
 
   console.log('user collection:', data?.data);
+
+
+  const polybaseSchema = generatePolybaseSchema('Post', PostSchemaFileds);
+  console.log('polybaseSchema:', polybaseSchema);
 
   return (
     <Box>
