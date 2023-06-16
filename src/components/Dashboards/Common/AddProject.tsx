@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Stack, Box, Text, Button, Image, Icon } from "@chakra-ui/react";
+import { Stack, Box, Text, Button, Image, Link } from "@chakra-ui/react";
 import { ArrowBackIcon } from "@chakra-ui/icons";
 import { ProjectModal } from "./ProjectModal";
 

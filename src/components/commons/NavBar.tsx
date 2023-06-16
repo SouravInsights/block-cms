@@ -1,5 +1,5 @@
 import React from "react";
-import { HStack, Heading, Button, Box } from "@chakra-ui/react";
+import { HStack, Heading, Button, Image } from "@chakra-ui/react";
 import { useDisconnect, useEnsName } from "wagmi";
 import { truncateAddress } from "../../utils/common";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
@@ -8,7 +8,7 @@ import { NavLogin } from "./NavLogin";
 type Props = {
   connectWalletClick?: () => void;
   isConnected?: boolean;
-  address?: `0x${string}`;
+  address?: any;
 };
 
 export const NavBar = ({ connectWalletClick, isConnected, address }: Props) => {
@@ -25,9 +25,12 @@ export const NavBar = ({ connectWalletClick, isConnected, address }: Props) => {
       borderRadius="10px"
       display="flex"
     >
-      <Heading color="#000000" fontSize="35px" fontWeight="bold">
-        BlockCMS
-      </Heading>
+      <Image
+        w={"242px"}
+        h={"48px"}
+        src="./Image/BlockCMS Logo.svg"
+        alt="Twitter"
+      />
       {isConnected ? (
         <HStack spacing={4}>
           <Heading color="#5a43cc" fontSize="22px" fontWeight="semibold">
