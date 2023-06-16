@@ -154,6 +154,11 @@
   resolved "https://registry.yarnpkg.com/@apollo/utils.withrequired/-/utils.withrequired-2.0.1.tgz#e72bc512582a6f26af150439f7eb7473b46ba874"
   integrity sha512-YBDiuAX9i1lLc6GeTy1m7DGLFn/gMnvXqlalOIMjM7DeOgIacEjjfwPqb0M1CQ2v11HhR15d1NmxJoRCfrNqcA==
 
+"@as-integrations/next@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@as-integrations/next/-/next-2.0.0.tgz#3624e8ea1277a971e3240570c09a46d5e93bd9c3"
+  integrity sha512-adE/V6C7LpNMmkBq9uC/H4fN3toNluEqJTq0dhkZ9y2Np6a/sdwA8DCA0WZqLUxzbdSln1AKmTKAv3liohqKwA==
+
 "@babel/code-frame@^7.0.0":
   version "7.21.4"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.21.4.tgz#d0fa9e4413aca81f2b23b9442797bda1826edb39"

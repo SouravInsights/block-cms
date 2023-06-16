@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@apollo/server": "^4.7.2",
+    "@as-integrations/next": "^2.0.0",
     "@chakra-ui/next-js": "^2.1.4",
     "@chakra-ui/react": "^2.7.0",
     "@composedb/client": "^0.4.4",

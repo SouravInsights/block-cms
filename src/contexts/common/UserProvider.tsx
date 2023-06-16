@@ -43,7 +43,6 @@ export function UserProvider({ children, storagePrefix = 'polybase.', domain }: 
     const publicKey = authState.publicKey
     if (!publicKey) return
 
-
     const applySchemas = async () => {
       await db.applySchema(schemas);
     };

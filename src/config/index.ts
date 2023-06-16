@@ -1,4 +1,4 @@
 import { auth } from "./auth"
-import { polybase } from "./polybase"
+import { db, userProjectDb } from "./polybase"
 
-export { auth, polybase }
+export { auth, db, userProjectDb }

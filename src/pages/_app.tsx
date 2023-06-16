@@ -11,7 +11,7 @@ import { mainnet, polygon, optimism, arbitrum } from "wagmi/chains";
 import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 
-import { auth, polybase } from "../config"
+import { auth, db } from "../config"
 import { PolybaseProvider, AuthProvider } from '@polybase/react'
 import { UserProvider } from '@/contexts/common/UserProvider';
 
@@ -38,8 +38,8 @@ const wagmiConfig = createConfig({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <PolybaseProvider polybase={polybase}>
-      <AuthProvider polybase={polybase} auth={auth}>
+    <PolybaseProvider polybase={db}>
+      <AuthProvider polybase={db} auth={auth}>
         <WagmiConfig config={wagmiConfig}>
           <ChakraProvider>
             <main className={inter.className}>
