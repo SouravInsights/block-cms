@@ -1,4 +1,6 @@
-export const generateGraphQLTypeDefs = (schema: any) => {
+import { makeExecutableSchema, addResolversToSchema } from '@graphql-tools/schema';
+
+export const generateGqlTypeDefs = (schema: any) => {
   const fields = Object.entries(schema).map(([fieldName, fieldData]) => {
     console.log(schema);
     const { type, required } = fieldData;
@@ -24,7 +26,7 @@ export const generateGraphQLTypeDefs = (schema: any) => {
   `;
 };
 
-export function generateGraphQLSchema(polybaseSchema: string): string {
+export function generateGqlSchema(polybaseSchema: string): string {
   // Input validation: Ensure polybaseSchema is a string
   if (typeof polybaseSchema !== 'string') {
     throw new Error('Polybase schema must be a string');
@@ -89,3 +91,107 @@ export function generateGraphQLSchema(polybaseSchema: string): string {
 
   return typeDefs;
 }
+
+// Utility function to generate resolvers for a GraphQL schema
+interface Type {
+  schema: string;
+}
+
+interface Field {
+  name: string;
+  type: string;
+}
+
+const getFieldDefinitions = (schema: string): Field[] => {
+  const fieldRegex = /(\w+): (\w+)!/g;
+  const matches = schema.matchAll(fieldRegex);
+  const fields: Field[] = Array.from(matches, ([, name, type]) => ({ name, type }));
+  return fields;
+};
+
+const getTypeRelationships = (schema: string): string[] => {
+  const relationshipRegex = /@refersTo\((\w+)\)/g;
+  const matches = schema.matchAll(relationshipRegex);
+  const relationships: string[] = Array.from(matches, ([, typeName]) => typeName);
+  return relationships;
+};
+
+export const generateGqlResolvers = (type: Type): any => {
+  const typeName = type.schema.match(/type (\w+)/)?.[1];
+  if (!typeName) {
+    throw new Error('Invalid schema type: Missing type name');
+  }
+
+  const queryTypeName = 'Query';
+  const mutationTypeName = 'Mutation';
+
+  const fields = getFieldDefinitions(type.schema);
+  const relationships = getTypeRelationships(type.schema);
+
+  const createInputTypeName = `Create${typeName}Input`;
+  const updateInputTypeName = `Update${typeName}Input`;
+
+  const filteredFields = fields.filter(field => field.name !== 'id');
+
+  const typeDefs = `
+    type ${typeName} {
+      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
+    }
+
+    type ${queryTypeName} {
+      ${typeName.toLowerCase()}: ${typeName}
+    }
+
+    type ${mutationTypeName} {
+      create${typeName}(input: ${createInputTypeName}): ${typeName}
+      update${typeName}(input: ${updateInputTypeName}): ${typeName}
+      delete${typeName}(id: ID!): Boolean
+    }
+
+    input ${createInputTypeName} {
+      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
+    }
+
+    input ${updateInputTypeName} {
+      id: ID!
+      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
+    }
+  `;
+
+  const resolvers = {
+    Query: {
+      [typeName.toLowerCase()]: () => {
+        // Implement your logic to fetch data for the specific type here
+        // Return the data based on the query
+      },
+    },
+    Mutation: {
+      [`create${typeName}`]: (_, args) => {
+        // Implement your logic to create a new item of the specific type here
+        // Access the input arguments from the `args` parameter
+        // Return the created item
+        return {};
+      },
+      [`update${typeName}`]: (_, args) => {
+        // Implement your logic to update an existing item of the specific type here
+        // Access the input arguments from the `args` parameter
+        // Return the updated item
+        return {};
+      },
+      [`delete${typeName}`]: (_, args) => {
+        // Implement your logic to delete an item of the specific type here
+        // Access the input arguments from the `args` parameter
+        // Return a success message or boolean indicating the deletion status
+        return true;
+      },
+    },
+  };
+
+  const executableSchema = makeExecutableSchema({ typeDefs: [typeDefs] });
+  const schemaWithResolvers = addResolversToSchema({
+    schema: executableSchema,
+    resolvers,
+  });
+
+  return schemaWithResolvers;
+};

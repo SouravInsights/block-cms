@@ -1,21 +1,24 @@
 import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
+import { generateGqlResolvers } from '@/graphql/utils';
 
-const resolvers = {
-  Query: {
-    hello: () => 'world',
-  },
-};
+const postSchema = `#graphql
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+}
+`;
 
-const typeDefs = `#graphql
-  type Query {
-    hello: String
-  }
+const resolvers = generateGqlResolvers({ schema: postSchema });
+
+// Extract the typeDefs from the generated resolvers
+const typeDefs = `
+  ${postSchema}
 `;
 
 const server = new ApolloServer({
-  resolvers,
-  typeDefs,
+  schema: resolvers
 });
 
 export default startServerAndCreateNextHandler(server);

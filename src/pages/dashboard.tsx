@@ -2,9 +2,9 @@ import {
   Box, 
   Text
 } from '@chakra-ui/react';
-import { usePolybase, useDocument, useCollection } from "@polybase/react";
+import { usePolybase, useCollection } from "@polybase/react";
 import { generatePolybaseSchema } from '@/utils';
-import { generateGraphQLSchema } from '@/graphql/utils';
+import { generateGqlSchema, generateGqlResolvers } from '@/graphql/utils';
 
 const PostSchemaFileds = [
   {
@@ -52,6 +52,35 @@ const PostSchemaFileds = [
   }
 ]
 
+const schema = `
+  type Query {
+    post: String
+  }
+
+  type Mutation {
+    createPost(input: CreatePostInput): Post
+    updatePost(input: UpdatePostInput): Post
+    deletePost(id: ID!): Boolean
+  }
+
+  type Post {
+    id: ID!
+    title: String!
+    content: String!
+  }
+
+  input CreatePostInput {
+    title: String!
+    content: String!
+  }
+
+  input UpdatePostInput {
+    id: ID!
+    title: String
+    content: String
+  }
+`;
+
 /* Test cases for the `generateGraphqlSchema` function */
   // Test Case 1: Invalid Polybase schema (missing collection name)
   const polybaseSchema1 = `
@@ -88,27 +117,43 @@ const Dashboard = () => {
   const polybaseSchema = generatePolybaseSchema('Post', PostSchemaFileds);
   console.log('polybaseSchema:', polybaseSchema);
 
-  try {
-    const graphqlSchema = generateGraphQLSchema(polybaseSchema);
-    console.log('correct gnnnql schema:', graphqlSchema);
-  } catch (error) {
-    console.error(error.message);
-  }
 
-  try {
-    const graphqlSchema = generateGraphQLSchema(polybaseSchema1);
-    console.log('test case 1:', graphqlSchema);
-  } catch (error) {
-    console.error(error.message);
-  }
+    const graphqlSchema = generateGqlSchema(polybaseSchema);
+    console.log('correct gql schema:', graphqlSchema);
 
-  try {
-    const graphqlSchema = generateGraphQLSchema(polybaseSchema2);
-    console.log('test case 2:', graphqlSchema);
-  } catch (error) {
-    console.error(error.message);
-  }
+  // try {
+  //   const graphqlSchema = generateGqlSchema(polybaseSchema1);
+  //   console.log('test case 1:', graphqlSchema);
+  // } catch (error) {
+  //   console.error(error.message);
+  // }
 
+  // try {
+  //   const graphqlSchema = generateGqlSchema(polybaseSchema2);
+  //   console.log('test case 2:', graphqlSchema);
+  // } catch (error) {
+  //   console.error(error.message);
+  // }
+
+  // const typeName = 'Post'; // The type for which you want to generate queries and mutations
+
+  // const generatedResolvers = generateGqlResolvers(schema, typeName);
+  // console.log('generatedResolvers:', generatedResolvers);
+
+
+ // Example usage
+  const postSchema = `
+    type Post {
+      id: ID!
+      title: String!
+      content: String!
+    }
+  `;
+  
+  const resolvers = generateGqlResolvers({ schema: postSchema });
+  const { typedefs } = resolvers;
+  console.log('typedefs:', typedefs);
+  console.log('resolvers:', resolvers);
   return (
     <Box>
       {data?.data.map(({ data }, id) => (

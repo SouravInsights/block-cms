@@ -1,3 +1,3 @@
-import { generateGraphQLSchema, generateGraphQLTypeDefs } from './general';
+import { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers } from './general';
 
-export { generateGraphQLSchema, generateGraphQLTypeDefs }
+export { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers }
