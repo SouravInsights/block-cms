@@ -2,20 +2,32 @@ import { ApolloServer } from '@apollo/server';
 import { startServerAndCreateNextHandler } from '@as-integrations/next';
 import { generateGqlResolvers } from '@/graphql/utils';
 
-const postSchema = `#graphql
-type Post {
-  id: ID!
-  title: String!
-  content: String!
-}
-`;
-
-const resolvers = generateGqlResolvers({ schema: postSchema });
+const types = [
+  {
+    name: 'Post',
+    schema: `
+      id: ID!
+      title: String!
+      content: String!
+      authorId: ID!
+      @refersTo(Author)
+    `,
+  },
+  {
+    name: 'Author',
+    schema: `
+    id: ID!
+      name: String!
+      posts: [Post]
+    `,
+  },
+];
+const resolvers = generateGqlResolvers(types);
 
 // Extract the typeDefs from the generated resolvers
-const typeDefs = `
-  ${postSchema}
-`;
+// const typeDefs = `
+//   ${postSchema}
+// `;
 
 const server = new ApolloServer({
   schema: resolvers

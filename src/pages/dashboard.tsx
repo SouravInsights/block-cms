@@ -115,11 +115,7 @@ const Dashboard = () => {
     useCollection(polybase.collection("users"));
 
   const polybaseSchema = generatePolybaseSchema('Post', PostSchemaFileds);
-  console.log('polybaseSchema:', polybaseSchema);
-
-
-    const graphqlSchema = generateGqlSchema(polybaseSchema);
-    console.log('correct gql schema:', graphqlSchema);
+  const graphqlSchema = generateGqlSchema(polybaseSchema);
 
   // try {
   //   const graphqlSchema = generateGqlSchema(polybaseSchema1);
@@ -140,20 +136,26 @@ const Dashboard = () => {
   // const generatedResolvers = generateGqlResolvers(schema, typeName);
   // console.log('generatedResolvers:', generatedResolvers);
 
-
- // Example usage
-  const postSchema = `
-    type Post {
-      id: ID!
-      title: String!
-      content: String!
-    }
-  `;
+  const types = [
+    {
+      name: 'Post',
+      schema: `
+        id: ID!
+        title: String!
+        content: String!
+      `,
+    },
+    {
+      name: 'Author',
+      schema: `
+        id: ID!
+        name: String!
+      `,
+    },
+  ]; 
   
-  const resolvers = generateGqlResolvers({ schema: postSchema });
-  const { typedefs } = resolvers;
-  console.log('typedefs:', typedefs);
-  console.log('resolvers:', resolvers);
+  const resolvers = generateGqlResolvers(types);
+  console.log('resolvers from dashboard:', resolvers);
   return (
     <Box>
       {data?.data.map(({ data }, id) => (

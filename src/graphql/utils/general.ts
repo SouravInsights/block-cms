@@ -1,3 +1,4 @@
+import { map, filter, reduce, camelCase } from 'lodash';
 import { makeExecutableSchema, addResolversToSchema } from '@graphql-tools/schema';
 
 export const generateGqlTypeDefs = (schema: any) => {
@@ -93,9 +94,6 @@ export function generateGqlSchema(polybaseSchema: string): string {
 }
 
 // Utility function to generate resolvers for a GraphQL schema
-interface Type {
-  schema: string;
-}
 
 interface Field {
   name: string;
@@ -105,67 +103,104 @@ interface Field {
 const getFieldDefinitions = (schema: string): Field[] => {
   const fieldRegex = /(\w+): (\w+)!/g;
   const matches = schema.matchAll(fieldRegex);
-  const fields: Field[] = Array.from(matches, ([, name, type]) => ({ name, type }));
-  return fields;
+  return Array.from(matches, ([, name, type]) => ({ name, type }));
 };
 
 const getTypeRelationships = (schema: string): string[] => {
   const relationshipRegex = /@refersTo\((\w+)\)/g;
   const matches = schema.matchAll(relationshipRegex);
-  const relationships: string[] = Array.from(matches, ([, typeName]) => typeName);
-  return relationships;
+  return Array.from(matches, ([, typeName]) => typeName);
 };
 
-export const generateGqlResolvers = (type: Type): any => {
-  const typeName = type.schema.match(/type (\w+)/)?.[1];
-  if (!typeName) {
-    throw new Error('Invalid schema type: Missing type name');
-  }
+interface Type {
+  name: string;
+  schema: string;
+}
 
-  const queryTypeName = 'Query';
-  const mutationTypeName = 'Mutation';
+export const generateGqlResolvers = (types: Type[]): any => {
+  const resolvers: any = {};
 
-  const fields = getFieldDefinitions(type.schema);
-  const relationships = getTypeRelationships(type.schema);
-
-  const createInputTypeName = `Create${typeName}Input`;
-  const updateInputTypeName = `Update${typeName}Input`;
-
-  const filteredFields = fields.filter(field => field.name !== 'id');
-
-  const typeDefs = `
-    type ${typeName} {
-      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
+  const typeDefs = types.map(({ name, schema }) => {
+    const typeName = name;
+    if (!typeName) {
+      throw new Error('Invalid schema type: Missing type name');
     }
 
-    type ${queryTypeName} {
-      ${typeName.toLowerCase()}: ${typeName}
-    }
+    const queryTypeName = 'Query';
+    const mutationTypeName = 'Mutation';
 
-    type ${mutationTypeName} {
-      create${typeName}(input: ${createInputTypeName}): ${typeName}
-      update${typeName}(input: ${updateInputTypeName}): ${typeName}
-      delete${typeName}(id: ID!): Boolean
-    }
+    const fields = getFieldDefinitions(schema);
+    const relationships = getTypeRelationships(schema);
+    console.log('fields:', fields);
+    console.log('relationships:', relationships);
+    const relatedTypes = relationships.filter((relationship) =>
+      types.some((type) => type.name === relationship)
+    );
 
-    input ${createInputTypeName} {
-      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
-    }
+    const createInputTypeName = `Create${typeName}Input`;
+    const updateInputTypeName = `Update${typeName}Input`;
 
-    input ${updateInputTypeName} {
-      id: ID!
-      ${filteredFields.map(field => `${field.name}: ${field.type}`).join('\n')}
-    }
-  `;
+    const filteredFields = filter(fields, (field) => field.name !== 'id');
 
-  const resolvers = {
-    Query: {
+    const relatedFields = relatedTypes.map((relatedType) => {
+      const fieldName = camelCase(relatedType);
+      return `${fieldName}: ${relatedType}`;
+    });
+
+    const typeDef = `
+      type ${typeName} {
+        ${filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n')}
+        ${relatedFields.join('\n')}
+      }
+
+      type ${queryTypeName} {
+        ${typeName.toLowerCase()}: ${typeName}
+      }
+
+      type ${mutationTypeName} {
+        create${typeName}(input: ${createInputTypeName}): ${typeName}
+        update${typeName}(input: ${updateInputTypeName}): ${typeName}
+        delete${typeName}(id: ID!): Boolean
+      }
+
+      input ${createInputTypeName} {
+        ${filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n')}
+      }
+
+      input ${updateInputTypeName} {
+        id: ID!
+        ${filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n')}
+      }
+    `;
+
+    const typeResolvers = reduce(
+      relationships,
+      (acc, relationship) => {
+        return {
+          ...acc,
+          [relationship]: () => {
+            // Implement your logic to fetch the related data for the specific relationship here
+            // Return the related data based on the query
+          },
+        };
+      },
+      {}
+    );
+
+    resolvers[typeName] = {
+      ...typeResolvers,
+    };
+
+    resolvers.Query = {
+      ...(resolvers.Query || {}),
       [typeName.toLowerCase()]: () => {
         // Implement your logic to fetch data for the specific type here
         // Return the data based on the query
       },
-    },
-    Mutation: {
+    };
+
+    resolvers.Mutation = {
+      ...(resolvers.Mutation || {}),
       [`create${typeName}`]: (_, args) => {
         // Implement your logic to create a new item of the specific type here
         // Access the input arguments from the `args` parameter
@@ -184,10 +219,14 @@ export const generateGqlResolvers = (type: Type): any => {
         // Return a success message or boolean indicating the deletion status
         return true;
       },
-    },
-  };
+    };
 
-  const executableSchema = makeExecutableSchema({ typeDefs: [typeDefs] });
+    return typeDef;
+  });
+
+  console.log('typeDefs modified:', typeDefs.join('\n'));
+
+  const executableSchema = makeExecutableSchema({ typeDefs: typeDefs.join('\n') });
   const schemaWithResolvers = addResolversToSchema({
     schema: executableSchema,
     resolvers,
