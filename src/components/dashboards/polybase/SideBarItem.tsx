@@ -7,6 +7,7 @@ import {
   Menu,
   MenuButton,
   MenuList,
+  Button,
 } from "@chakra-ui/react";
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
   title: string;
   active: boolean;
   navSize: string;
+  onClick:()=> void;
 };
 
 export default function SideBarItem({
@@ -21,32 +23,22 @@ export default function SideBarItem({
   title,
   active,
   navSize,
+  onClick,
   ...props
 }: Props) {
   return (
-    <Flex
-      mt={30}
-      flexDir="column"
+    <Button mt={30}>
+      <Flex
+      flexDir="row"
       w="100%"
       alignItems={navSize == "small" ? "center" : "flex-start"}
+      onClick={onClick}
     >
-      <Menu placement="right">
-        <Link
-          backgroundColor={active ? "blackAlpha.300" : ""}
-          p={3}
-          borderRadius={8}
-          _hover={{ color: "none" }}
-        >
-          <MenuButton w="100%">
-            <Flex>
-              <Icon as={icon} fontSize="xl" color={"blackS"} />
-              <Text ml={5} display={navSize == "small" ? "none" : "flex"}>
+       <Icon as={icon} fontSize="xl" color={"blackS"} />
+       <Text ml={5} display={navSize == "small" ? "none" : "flex"}>
                 {title}
-              </Text>
-            </Flex>
-          </MenuButton>
-        </Link>
-      </Menu>
-    </Flex>
+       </Text>
+      </Flex>
+    </Button>
   );
 }

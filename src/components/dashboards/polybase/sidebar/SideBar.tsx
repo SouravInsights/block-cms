@@ -13,7 +13,6 @@ import {
 import {
   FiFileText,
   FiPaperclip,
-  FiMenu,
   FiSettings,
   FiAlertCircle,
 } from "react-icons/fi";
@@ -21,13 +20,17 @@ import {
   BiLayer,
   BiRocket,
   BiChevronLeftSquare,
-  BiChevronRightSquare,
+  BiMenu,
 } from "react-icons/bi";
-import SideBarItem from "./SideBarItem";
+import SideBarItem from "../SideBarItem";
+import ModelDrawer from "./ModelDrawer";
 
 const Sidebar = () => {
   const [navSize, changeNavSize] = useState("large");
+  const [isSelected, setSelect] = useState(false)
+  const [heading, setHeading] = useState('jasbdfaiu')
   return (
+    <Flex flexDir= 'row' >
     <Flex
       pos="sticky"
       h="88vh"
@@ -58,54 +61,75 @@ const Sidebar = () => {
           </Text>
           <Text fontSize="xs">Demo Project</Text>
         </Flex>
-      </Flex>
-
-      <Flex
-        flexDir="column"
-        w="100%"
-        alignItems={navSize == "small" ? "center" : "flex-end"}
-        as="nav"
-        p="5%"
-      >
         <IconButton
           aria-label={""}
           fontSize={"2rem"}
           onClick={() => {
             if (navSize == "small") changeNavSize("large");
             else changeNavSize("small");
-          }}
+          }
+        }
         >
-          {navSize == "small" ? (
-            <BiChevronRightSquare />
-          ) : (
+             {navSize == "small" ? (
+            <BiMenu />
+             ) : (
             <BiChevronLeftSquare />
-          )}
+             )}
         </IconButton>
+      </Flex>
+        <Flex
+        p="5%"
+        flexDir="column"
+        w="100%"
+        alignItems={navSize == "small" ? "center" : "flex-start"}
+        mb={4}
+      >
         <SideBarItem
           navSize={navSize}
           icon={BiLayer}
           title="Schema"
           active={false}
-        />
+          onClick ={
+            ()=>{
+              setHeading('Schema')
+              setSelect(true)
+           }
+          }
+          />
         <SideBarItem
           navSize={navSize}
           icon={FiFileText}
           title="Content"
           active={true}
+          onClick ={
+            ()=>{
+              setHeading('Content')
+           }
+          }
         />
         <SideBarItem
           navSize={navSize}
           icon={FiPaperclip}
           title="Files"
           active={false}
+          onClick ={
+            ()=>{
+              setHeading('Files')
+           }
+          }
         />
         <SideBarItem
           navSize={navSize}
           icon={BiRocket}
           title="API Playground"
           active={false}
+          onClick ={
+            ()=>{
+              setHeading('API Playground')
+           }
+          }
         />
-      </Flex>
+        </Flex>
 
       <Flex
         p="5%"
@@ -124,16 +148,29 @@ const Sidebar = () => {
             icon={FiSettings}
             title="Project Setting"
             active={false}
+            onClick ={
+              ()=>{
+                setHeading('Project Setting')
+             }
+            }
           />
           <SideBarItem
             navSize={navSize}
             icon={FiAlertCircle}
             title="Help"
             active={false}
+            onClick ={
+              ()=>{
+                setHeading('Help')
+             }
+            }
           />
         </Flex>
       </Flex>
     </Flex>
+    {isSelected? 
+    (<ModelDrawer />):('')}
+  </Flex>
   );
 };
 
