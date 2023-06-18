@@ -1,4 +1,3 @@
-import React, { useContext, useEffect, useState } from "react";
 import { Button, Image, Stack } from "@chakra-ui/react";
 
 type Props = {

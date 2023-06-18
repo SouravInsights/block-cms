@@ -13,7 +13,7 @@ import { CollectionModal } from "./CollectionModal";
 
 export const Schema = () => {
   return (
-    <Box maxW={"70%"} mx="auto" p="3rem">
+    <Box maxW={"70%"} mx="auto" px="2rem">
       <Box>
         <Heading
           fontFamily="Inter"
