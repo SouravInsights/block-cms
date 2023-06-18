@@ -12,9 +12,10 @@ export const NavLogin = () => {
   if (isLoggedInLoading) return null
 
   if (!isLoggedIn) {
-    return <Box><Button width='100%' onClick={() => signIn()}>Login</Button></Box>
+    return <Box>
+      <Button width='100%' onClick={() => signIn()}>Login</Button>
+      </Box>
   }
-
   return (
     <Box>
       <Button width='100%' onClick={() => signOut()}>
