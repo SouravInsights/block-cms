@@ -1,16 +1,15 @@
-import { Box, Flex } from "@chakra-ui/react"
-import Sidebar from "./SideBar"
-import ModelsDrawer from "./ModelsDrawer"
+import { Box, Flex } from "@chakra-ui/react";
+import Sidebar from "./SideBar";
+import ModelDrawer from "./ModelDrawer";
 
-const studio = () =>{
-
-return(
+const Studio = () => {
+  return (
     <Box>
-        <Flex flexDir="row">
-       <Sidebar/> 
-       <ModelsDrawer/>
-       </Flex>
+      <Flex flexDir="row">
+        <Sidebar />
+        <ModelDrawer />
+      </Flex>
     </Box>
-)
-}
-export default studio
+  );
+};
+export default Studio;
