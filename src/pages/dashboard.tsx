@@ -136,25 +136,23 @@ const Dashboard = () => {
   // const generatedResolvers = generateGqlResolvers(schema, typeName);
   // console.log('generatedResolvers:', generatedResolvers);
 
-  const types = [
-    {
-      name: 'Post',
-      schema: `
-        id: ID!
-        title: String!
-        content: String!
-      `,
-    },
-    {
-      name: 'Author',
-      schema: `
-        id: ID!
-        name: String!
-      `,
-    },
-  ]; 
-  
-  const resolvers = generateGqlResolvers(types);
+
+  const schema = `
+    type Author {
+      id: ID!
+      name: String!
+      bio: String!
+      posts: [Post!]!
+    }
+
+    type Post {
+      id: ID!
+      title: String!
+      content: String!
+      author: Author!
+    }
+  `
+  const resolvers = generateGqlResolvers(schema);
   console.log('resolvers from dashboard:', resolvers);
   return (
     <Box>
