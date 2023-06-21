@@ -1,5 +1,4 @@
-import { map, filter, reduce, camelCase, flatMap } from 'lodash';
-import { GraphQLSchema, GraphQLObjectType } from 'graphql';
+import { map, filter } from 'lodash';
 import { makeExecutableSchema, addResolversToSchema } from '@graphql-tools/schema';
 
 export const generateGqlTypeDefs = (schema: any) => {
@@ -94,28 +93,6 @@ export function generateGqlSchema(polybaseSchema: string): string {
   return typeDefs;
 }
 
-export function isCustomObjectType(type: any): boolean {
-  if (type.ofType) {
-    return isCustomObjectType(type.ofType);
-  }
-
-  return type.constructor.name !== 'GraphQLScalarType';
-}
-
-export function filterCustomObjectFields(schema: GraphQLSchema): string[] {
-  return flatMap(schema.getTypeMap(), (type) => {
-    if (type instanceof GraphQLObjectType) {
-      return Object.keys(type.getFields())
-        .filter((fieldName) => {
-          const fieldType = type.getFields()[fieldName].type;
-          return isCustomObjectType(fieldType);
-        })
-        .map((fieldName) => `${type.name}.${fieldName}`);
-    }
-    return [];
-  });
-}
-
 // Utility function to generate resolvers for a GraphQL schema
 
 interface Field {
@@ -197,6 +174,7 @@ const getTypeRelationships = (schema: string): string[] => {
     'Author!'   // The "author" field in Post type (non-null Author)
   ]
   */
+
   const matches = Array.from(schema.matchAll(relationshipRegex), ([, , type]) => type);
   
   /* The `relationships` array is constructed by iterating over each element in the `matches`
@@ -205,8 +183,8 @@ const getTypeRelationships = (schema: string): string[] => {
     Inside the `map` callback function, we perform the following steps:
 
     1. Determine if the relationship type is a list type:
-      - We check if the `type` starts with `[` and ends with `]` using the `startsWith` and `endsWith` methods.
-      - If it satisfies both conditions, then it indicates a list type.
+      - We check if the `type` matches the regex: `/\[.*?\](?=\!?$)/` to check for various list type patterns.
+      - If it satisfies the regex, then it indicates a list type.
     2. Determine if the relationship type is non-null:
       - We check if the `type` ends with `!` using the `endsWith` method.
       - If it ends with !, then it indicates a non-null type.
@@ -223,14 +201,32 @@ const getTypeRelationships = (schema: string): string[] => {
     above, and constructs the corresponding `relationship` type string. The resulting relationship types are stored 
     in the relationships array, which is then returned by the `getTypeRelationships` function.   
   */
- 
-  const relationships = matches.map((type) => {
-    const isList = type.startsWith('[') && type.endsWith(']');
+
+  const relationships = matches.map((type: any) => {
+    const allListTypeRegex = /\[.*?\](?=\!?$)/; // Regular expression to match all list types
+    const nonNullableNonNullListRegex = /\[.*!\]!/ // Matches [Type!]!
+    const nonNullableNullListRegex = /\[.*!\]/; // Matches [Type!]
+    const nullableNonNullListRegex = /\[.*\]!/; // Matches [Type]!
+    const nullableListRegex = /\[.*\]/; // Matches [Type]
+
+    const isNonNullableNonNullList = nonNullableNonNullListRegex.test(type);
+    const isNonNullableNullList = nonNullableNullListRegex.test(type);
+    const isNullableNonNullList = nullableNonNullListRegex.test(type);
+    const isNullableList = nullableListRegex.test(type);
     const isNonNull = type.endsWith('!');
+
     const typeName = type.replace(/[\[\]!]/g, '');
-      // Exclude scalar types
+      // Exclude scalar types & return appropriate typeNames based on the regex patterns & conditions
       if (typeName !== 'String' && typeName !== 'Int' && typeName !== 'Float' && typeName !== 'Boolean' && typeName !== 'ID') {
-        return `${typeName}${isList ? '[]' : ''}${isNonNull ? '!' : ''}`;
+        return `
+          ${isNonNullableNonNullList ? `[${typeName}!]!` 
+            : isNonNullableNullList ? `[${typeName}!]` 
+              : isNullableNonNullList ? `[${typeName}!]` 
+                : isNullableList ? `[${typeName}]!`
+                  : isNonNull ? `${typeName}!` 
+                    : `${typeName}`
+          }
+        `.trim();
       }
     });
   
@@ -251,21 +247,15 @@ export const generateGqlResolvers = (schema: string): any => {
     }
 
     const fields = getFieldDefinitions(typeSchema);
-    console.log('fields:', fields);
+    const relationships = getTypeRelationships(typeSchema);
     const filteredFields = filter(fields, (field) => field.name !== 'id');
-    console.log('filteredFields:', filteredFields);
 
-    // Filter out related fields and assign then their respective Input Type..
-    // use getTypeRelationships();
-    // ${typeName}Input!
     const inputTypeFields = filteredFields
       .map((field) => {
         const fieldType = field.type.replace(/[\[\]!]/g, '');
-        return `${field.name}: ${fieldType}`;
+        return relationships.includes(field.type) ? `${field.name}: ${fieldType}Input` : `${field.name}: ${fieldType}`;
       })
       .join('\n');
-    
-    console.log('inputTypeFields:', inputTypeFields);
     
     const queryTypeName = 'Query';
     const mutationTypeName = 'Mutation';
@@ -324,8 +314,6 @@ export const generateGqlResolvers = (schema: string): any => {
   });
 
   const typeDefsString = typeDefs.join('\n');
-  console.log('typeDefsString:', typeDefsString);
-
   const executableSchema = makeExecutableSchema({ typeDefs: typeDefsString });
   const schemaWithResolvers = addResolversToSchema({
     schema: executableSchema,
@@ -334,49 +322,3 @@ export const generateGqlResolvers = (schema: string): any => {
 
   return schemaWithResolvers;
 };
-
-const sampleSchema = `
-  type Author {
-    name: String!
-    bio: String!
-    posts: [Post!]!
-  }
-
-  type Query {
-    author: Author
-  }
-
-  type Mutation {
-    createAuthor(input: AuthorInput!): Author
-    updateAuthor(id: ID!, input: AuthorInput!): Author
-    deleteAuthor(id: ID!): Boolean
-  }
-
-  input AuthorInput {
-    name: String
-    bio: String
-    posts: PostInput
-  }
-
-  type Post {
-    title: String!
-    content: String!
-    author: Author!
-  }
-
-  type Query {
-    post: Post
-  }
-
-  type Mutation {
-    createPost(input: PostInput!): Post
-    updatePost(id: ID!, input: PostInput!): Post
-    deletePost(id: ID!): Boolean
-  }
-
-  input PostInput {
-    title: String
-    content: String
-    author: AuthorInput
-  }
-`
