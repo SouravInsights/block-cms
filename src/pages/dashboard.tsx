@@ -4,7 +4,7 @@ import {
 } from '@chakra-ui/react';
 import { usePolybase, useCollection } from "@polybase/react";
 import { generatePolybaseSchema } from '@/utils';
-import { generateGqlSchema, generateGqlResolvers } from '@/graphql/utils';
+import { generateGqlSchema, generateGqlResolvers, filterCustomObjectFields } from '@/graphql/utils';
 
 const PostSchemaFileds = [
   {
@@ -154,6 +154,7 @@ const Dashboard = () => {
   `
   const resolvers = generateGqlResolvers(schema);
   console.log('resolvers from dashboard:', resolvers);
+
   return (
     <Box>
       {data?.data.map(({ data }, id) => (

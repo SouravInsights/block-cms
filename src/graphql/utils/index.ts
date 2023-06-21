@@ -1,3 +1,3 @@
-import { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers } from './general';
+import { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers, filterCustomObjectFields } from './general';
 
-export { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers }
+export { generateGqlSchema, generateGqlTypeDefs, generateGqlResolvers, filterCustomObjectFields }

@@ -1,4 +1,5 @@
-import { map, filter, reduce, camelCase } from 'lodash';
+import { map, filter, reduce, camelCase, flatMap } from 'lodash';
+import { GraphQLSchema, GraphQLObjectType } from 'graphql';
 import { makeExecutableSchema, addResolversToSchema } from '@graphql-tools/schema';
 
 export const generateGqlTypeDefs = (schema: any) => {
@@ -93,6 +94,28 @@ export function generateGqlSchema(polybaseSchema: string): string {
   return typeDefs;
 }
 
+export function isCustomObjectType(type: any): boolean {
+  if (type.ofType) {
+    return isCustomObjectType(type.ofType);
+  }
+
+  return type.constructor.name !== 'GraphQLScalarType';
+}
+
+export function filterCustomObjectFields(schema: GraphQLSchema): string[] {
+  return flatMap(schema.getTypeMap(), (type) => {
+    if (type instanceof GraphQLObjectType) {
+      return Object.keys(type.getFields())
+        .filter((fieldName) => {
+          const fieldType = type.getFields()[fieldName].type;
+          return isCustomObjectType(fieldType);
+        })
+        .map((fieldName) => `${type.name}.${fieldName}`);
+    }
+    return [];
+  });
+}
+
 // Utility function to generate resolvers for a GraphQL schema
 
 interface Field {
@@ -128,7 +151,7 @@ interface Field {
 */
 
 const getFieldDefinitions = (schema: string): Field[] => {
-  const fieldRegex = /(\w+): (\w+)!/g;
+  const fieldRegex = /(\w+): (\[?(\w+!?)+\]?[!]?)/g;
   const matches = schema.matchAll(fieldRegex);
   return Array.from(matches, ([, name, type]) => ({ name, type }));
 };
@@ -227,119 +250,56 @@ export const generateGqlResolvers = (schema: string): any => {
       throw new Error('Invalid schema type: Missing type name');
     }
 
+    const fields = getFieldDefinitions(typeSchema);
+    console.log('fields:', fields);
+    const filteredFields = filter(fields, (field) => field.name !== 'id');
+    console.log('filteredFields:', filteredFields);
+
+    // Filter out related fields and assign then their respective Input Type..
+    // use getTypeRelationships();
+    // ${typeName}Input!
+    const inputTypeFields = filteredFields
+      .map((field) => {
+        const fieldType = field.type.replace(/[\[\]!]/g, '');
+        return `${field.name}: ${fieldType}`;
+      })
+      .join('\n');
+    
+    console.log('inputTypeFields:', inputTypeFields);
+    
     const queryTypeName = 'Query';
     const mutationTypeName = 'Mutation';
-
-    const fields = getFieldDefinitions(typeSchema);
-    const relationships = getTypeRelationships(typeSchema);
-    const relatedTypes = relationships.filter((relationship) =>
-      types.some((t) => t.includes(relationship))
-    );
-
-    const filteredFields = filter(fields, (field) => field.name !== 'id');
-
-    const relatedFields = relatedTypes.map((relatedType) => {
-      const fieldName = camelCase(relatedType);
-      return `${fieldName}: ${relatedType}`;
-    });
-
-    // const inputTypeFields = filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n');
-    // const createInputFields = `
-    //   ${inputTypeFields}
-    //   ${relatedTypes.map((relatedType) => {
-    //     const fieldName = camelCase(relatedType);
-    //     const inputTypeName = `Create${relatedType.replace(/!/g, '')}Input`;
-    //     return `${fieldName}: ${inputTypeName}`;
-    //   }).join('\n')}
-    // `;
-    // const updateInputFields = `
-    //   id: ID!
-    //   ${inputTypeFields}
-    //   ${relatedTypes.map((relatedType) => {
-    //     const fieldName = camelCase(relatedType);
-    //     const inputTypeName = `Create${relatedType.replace(/!/g, '')}Input`;
-    //     return `${fieldName}: ${inputTypeName}`;
-    //   }).join('\n')}
-    // `;
-
-    const inputTypeFields = filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n');
-    const createInputFields = `
-      ${inputTypeFields}
-      ${relatedTypes.map((relatedType) => {
-        const fieldName = camelCase(relatedType);
-        const inputTypeName = `${relatedType.replace(/!/g, '')}Input`;
-        return `${fieldName}: ${inputTypeName}`;
-      }).join('\n')}
-    `;
-    const updateInputFields = `
-      id: ID!
-      ${inputTypeFields}
-      ${relatedTypes.map((relatedType) => {
-        const fieldName = camelCase(relatedType);
-        const inputTypeName = `${relatedType.replace(/!/g, '')}Input`;
-        return `${fieldName}: ${inputTypeName}`;
-      }).join('\n')}
-    `;
-
-    console.log('createInputFields modified:', createInputFields);
-    console.log('updateInputFields modified:', updateInputFields);
-
-    const createInputTypeName = `${typeName}Input`;
-    const updateInputTypeName = `${typeName}Input`;
-
+    
     const typeDef = `
       type ${typeName} {
-        ${map(filteredFields, (field) => `${field.name}: ${field.type}`).join('\n')}
-        ${relatedFields.join('\n')}
+        ${filteredFields.map((field) => `${field.name}: ${field.type}`).join('\n')}
       }
-
+    
       type ${queryTypeName} {
         ${typeName.toLowerCase()}: ${typeName}
       }
-
+    
       type ${mutationTypeName} {
-        create${typeName}(input: ${createInputTypeName}!): ${typeName}
-        update${typeName}(id: ID!, input: ${updateInputTypeName}!): ${typeName}
+        create${typeName}(input: ${typeName}Input!): ${typeName}
+        update${typeName}(id: ID!, input: ${typeName}Input!): ${typeName}
         delete${typeName}(id: ID!): Boolean
       }
-
-      input ${createInputTypeName} {
-        ${createInputFields}
-      }
-
-      input ${updateInputTypeName} {
-        ${updateInputFields}
+    
+      input ${typeName}Input {
+        ${inputTypeFields}
       }
     `;
 
-    const typeResolvers = reduce(
-      relationships,
-      (acc, relationship) => {
-        return {
-          ...acc,
-          [relationship]: () => {
-            // Implement logic to fetch the related data for the specific relationship here
-            // Return the related data based on the query
-          },
-        };
-      },
-      {}
-    );
-
-    resolvers[typeName] = {
-      ...typeResolvers,
-    };
-
-    resolvers.Query = {
-      ...(resolvers.Query || {}),
+    resolvers[queryTypeName] = {
+      ...(resolvers[queryTypeName] || {}),
       [typeName.toLowerCase()]: () => {
         // Implement logic to fetch data for the specific type here
         // Return the data based on the query
       },
     };
-
-    resolvers.Mutation = {
-      ...(resolvers.Mutation || {}),
+    
+    resolvers[mutationTypeName] = {
+      ...(resolvers[mutationTypeName] || {}),
       [`create${typeName}`]: (_, args) => {
         // Implement logic to create a new item of the specific type here
         // Access the input arguments from the `args` parameter
@@ -358,7 +318,7 @@ export const generateGqlResolvers = (schema: string): any => {
         // Return a success message or boolean indicating the deletion status
         return true;
       },
-    };
+    };    
 
     return typeDef;
   });
@@ -374,3 +334,49 @@ export const generateGqlResolvers = (schema: string): any => {
 
   return schemaWithResolvers;
 };
+
+const sampleSchema = `
+  type Author {
+    name: String!
+    bio: String!
+    posts: [Post!]!
+  }
+
+  type Query {
+    author: Author
+  }
+
+  type Mutation {
+    createAuthor(input: AuthorInput!): Author
+    updateAuthor(id: ID!, input: AuthorInput!): Author
+    deleteAuthor(id: ID!): Boolean
+  }
+
+  input AuthorInput {
+    name: String
+    bio: String
+    posts: PostInput
+  }
+
+  type Post {
+    title: String!
+    content: String!
+    author: Author!
+  }
+
+  type Query {
+    post: Post
+  }
+
+  type Mutation {
+    createPost(input: PostInput!): Post
+    updatePost(id: ID!, input: PostInput!): Post
+    deletePost(id: ID!): Boolean
+  }
+
+  input PostInput {
+    title: String
+    content: String
+    author: AuthorInput
+  }
+`

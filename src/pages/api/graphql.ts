@@ -17,7 +17,9 @@ type Post {
   author: Author!
 }
 `
+
 const resolvers = generateGqlResolvers(schema);
+console.log('resolvers:', resolvers);
 
 const server = new ApolloServer({
   schema: resolvers
