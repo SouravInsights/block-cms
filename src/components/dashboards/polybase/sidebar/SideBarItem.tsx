@@ -3,10 +3,6 @@ import {
   Flex,
   Text,
   Icon,
-  Link,
-  Menu,
-  MenuButton,
-  MenuList,
   Button,
 } from "@chakra-ui/react";
 
@@ -17,7 +13,6 @@ type Props = {
   navSize: string;
   onClick:()=> void;
 };
-
 export default function SideBarItem({
   icon,
   title,

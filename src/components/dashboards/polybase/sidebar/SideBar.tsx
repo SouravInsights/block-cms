@@ -4,11 +4,9 @@ import {
   Text,
   IconButton,
   Divider,
-  Avatar,
-  Heading,
-  Image,
-  Box,
   Square,
+  HStack,
+  VStack,
 } from "@chakra-ui/react";
 import {
   FiFileText,
@@ -22,8 +20,31 @@ import {
   BiChevronLeftSquare,
   BiMenu,
 } from "react-icons/bi";
-import SideBarItem from "../SideBarItem";
+import SideBarItem from "./SideBarItem";
 import ModelDrawer from "./ModelDrawer";
+const SideBarItems = [
+  {
+    id : 1,
+    name : 'Schema',
+    itemIcon : BiLayer
+  },
+  {
+    id : 2,
+    name : 'Content',
+    itemIcon : FiFileText
+  },
+  {
+    id : 3,
+    name : 'Files',
+    itemIcon : FiPaperclip
+  },
+  {
+    id : 4,
+    name : 'API Plyaground',
+    itemIcon : BiRocket
+  },
+  
+]
 
 const Sidebar = () => {
   const [navSize, changeNavSize] = useState("large");
@@ -41,19 +62,33 @@ const Sidebar = () => {
       justifyContent="space-between"
       bg={"gray.100"}
     >
-      <Flex flexDir="row" p="5%">
+    <VStack mt={5} >
+        <IconButton
+          aria-label={""}
+          mr={5}
+          fontSize={"2rem"}
+          onClick={() => {
+            if (navSize == "small") changeNavSize("large");
+            else changeNavSize("small");
+           }
+            }
+          as={navSize == "small"? (
+           BiMenu
+              ) : (
+           BiChevronLeftSquare
+             )}
+       />
+       <HStack mt={30}>
         <IconButton
           aria-label={""}
           alignItems={navSize == "small" ? "center" : "flex-start"}
-          pt={navSize == "small" ? "5" : ""}
-        >
+          >
           <Square bg="Black" size="60px">
             <Text color="white"> demo</Text>
           </Square>
         </IconButton>
         <Flex
           flexDir="column"
-          pl="5"
           display={navSize == "small" ? "none" : "flex"}
         >
           <Text fontSize="md" as="b">
@@ -61,22 +96,8 @@ const Sidebar = () => {
           </Text>
           <Text fontSize="xs">Demo Project</Text>
         </Flex>
-        <IconButton
-          aria-label={""}
-          fontSize={"2rem"}
-          onClick={() => {
-            if (navSize == "small") changeNavSize("large");
-            else changeNavSize("small");
-          }
-        }
-        >
-             {navSize == "small" ? (
-            <BiMenu />
-             ) : (
-            <BiChevronLeftSquare />
-             )}
-        </IconButton>
-      </Flex>
+      </HStack>
+    </VStack>
         <Flex
         p="5%"
         flexDir="column"
@@ -84,53 +105,24 @@ const Sidebar = () => {
         alignItems={navSize == "small" ? "center" : "flex-start"}
         mb={4}
       >
-        <SideBarItem
-          navSize={navSize}
-          icon={BiLayer}
-          title="Schema"
-          active={false}
-          onClick ={
-            ()=>{
-              setHeading('Schema')
-              setSelect(true)
-           }
-          }
-          />
-        <SideBarItem
-          navSize={navSize}
-          icon={FiFileText}
-          title="Content"
-          active={true}
-          onClick ={
-            ()=>{
-              setHeading('Content')
-           }
-          }
-        />
-        <SideBarItem
-          navSize={navSize}
-          icon={FiPaperclip}
-          title="Files"
-          active={false}
-          onClick ={
-            ()=>{
-              setHeading('Files')
-           }
-          }
-        />
-        <SideBarItem
-          navSize={navSize}
-          icon={BiRocket}
-          title="API Playground"
-          active={false}
-          onClick ={
-            ()=>{
-              setHeading('API Playground')
-           }
-          }
-        />
-        </Flex>
+          {SideBarItems.map((item) =>{
+            return(
+              <SideBarItem
+                key={item.id}
+                icon={item.itemIcon}
+                title={item.name} 
+                active={false} 
+                navSize={navSize} 
+                onClick={()=>{
+                  setSelect(true)
+                  setHeading(item.name)
+                }}                
+              />
+            );
 
+          }
+          )}
+        </Flex>
       <Flex
         p="5%"
         flexDir="column"
@@ -168,8 +160,8 @@ const Sidebar = () => {
         </Flex>
       </Flex>
     </Flex>
-    {isSelected? 
-    (<ModelDrawer />):('')}
+    {isSelected && heading !== 'API Plyaground'?
+    (<ModelDrawer heading={heading} />):('')}
   </Flex>
   );
 };
