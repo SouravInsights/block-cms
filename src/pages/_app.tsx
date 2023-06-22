@@ -12,9 +12,9 @@ import { alchemyProvider } from "wagmi/providers/alchemy";
 import { publicProvider } from "wagmi/providers/public";
 import { DBProvider } from "@/contexts/common/DBProvider";
 
-import { auth, polybase } from "../config"
-import { PolybaseProvider, AuthProvider } from '@polybase/react'
-import { UserProvider } from '@/contexts/common/UserProvider';
+import { auth, polybase } from "../config";
+import { PolybaseProvider, AuthProvider } from "@polybase/react";
+import { UserProvider } from "@/contexts/common/UserProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 const { chains, publicClient } = configureChains(
@@ -45,11 +45,11 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ChakraProvider>
             <main className={inter.className}>
               <UserProvider>
-              <DBProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-               </DBProvider>
+                <DBProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                  </Layout>
+                </DBProvider>
               </UserProvider>
             </main>
           </ChakraProvider>

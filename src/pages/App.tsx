@@ -11,7 +11,6 @@ export default function App() {
   const { data, error, loading } = useDocument(
     polybase.collection("users").record("id")
   );
-  // console.log('user id:', data);
 
   const { isConnected } = useAccount();
   const { db, setDb } = useDB();
