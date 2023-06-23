@@ -5,6 +5,7 @@ import { useCurrentUserId } from "@/contexts/common/useCurrentUserId";
 import { useDB } from "@/contexts/common/DBProvider";
 import { AddProject } from "../components/Dashboards/Common/AddProject";
 import Studio from "../components/Dashboards/polybase/Studio";
+import Content from "../components/Dashboards/polybase/Content";
 
 const Dashboard = () => {
   const polybase = usePolybase();
