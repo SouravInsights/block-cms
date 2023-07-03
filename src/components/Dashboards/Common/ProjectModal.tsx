@@ -11,13 +11,13 @@ const ProjectModal = () => {
   };
 
   return (
-    <div>
+    <>
       {!formData ? (
         <FormPage onFormSubmit={handleFormSubmit} />
       ) : (
         <Sidebar formData={formData} />
       )}
-    </div>
+    </>
   );
 };
 

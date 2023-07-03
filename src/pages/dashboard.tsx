@@ -1,10 +1,10 @@
 import { Box, Text } from "@chakra-ui/react";
 import { SelectDB } from "../components/commons/sections";
-import { usePolybase, useDocument, useCollection } from "@polybase/react";
+import { usePolybase, useCollection } from "@polybase/react";
 import { useCurrentUserId } from "@/contexts/common/useCurrentUserId";
 import { useDB } from "@/contexts/common/DBProvider";
-import { AddProject } from "../components/Dashboards/Common/AddProject";
-import Studio from "../components/Dashboards/polybase/Studio";
+import { AddProject } from "../components/dashboards/Common/AddProject";
+import { Studio } from "../components/dashboards/polybase/index";
 
 const Dashboard = () => {
   const polybase = usePolybase();
@@ -12,7 +12,7 @@ const Dashboard = () => {
 
   console.log("user collection:", data?.data);
   const [publicKey] = useCurrentUserId();
-  const { db, setDb } = useDB();
+  const { db } = useDB();
   console.log("current db:", db);
   return (
     <Box>

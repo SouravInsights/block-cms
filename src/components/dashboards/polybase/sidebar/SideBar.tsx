@@ -32,7 +32,7 @@ const SideBarItems = [
     id: 3,
     name: "Files",
     itemIcon: FiPaperclip,
-  },
+  },  
   {
     id: 4,
     name: "API Plyaground",
@@ -80,21 +80,20 @@ const Sidebar = ({ formData }: any) => {
               flexDir="column"
               display={navSize == "small" ? "none" : "flex"}
             >
-              <p>{formData.projectName}</p>
-              {/*<Text fontSize="md" as="b">
+              <Text fontSize="md" as="b">
                 Demo Project
               </Text>
-              <Text fontSize="xs">Demo Project</Text>*/}
+              <Text fontSize="xs">Demo Project</Text>
             </Flex>
           </HStack>
         </VStack>
         <Flex
           p="5%"
-          flexDir="column"
-          w="100%"
+          w='100%'
           alignItems={navSize == "small" ? "center" : "flex-start"}
           mb={4}
         >
+          <Flex flexDir="column">
           {SideBarItems.map((item) => {
             return (
               <SideBarItem
@@ -110,6 +109,7 @@ const Sidebar = ({ formData }: any) => {
               />
             );
           })}
+          </Flex>
         </Flex>
         <Flex
           p="5%"
@@ -122,7 +122,8 @@ const Sidebar = ({ formData }: any) => {
             color={"black"}
             display={navSize == "small" ? "none" : "flex"}
           />
-          <Flex flexDir="column">
+          <Flex flexDir="column"
+          >
             <SideBarItem
               navSize={navSize}
               icon={FiSettings}

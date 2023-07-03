@@ -21,8 +21,7 @@ import { HiPlus } from "react-icons/hi";
 
 const FormPage = ({ onFormSubmit }: any) => {
   const [projectName, setProjectName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const initialRef = React.useRef(null);
@@ -32,8 +31,7 @@ const FormPage = ({ onFormSubmit }: any) => {
     e.preventDefault();
     const data = {
       projectName,
-      lastName,
-      email,
+      description,
     };
     onFormSubmit(data);
   };
@@ -73,15 +71,16 @@ const FormPage = ({ onFormSubmit }: any) => {
                   type="text"
                   value={projectName}
                   onChange={(e) => setProjectName(e.target.value)}
+                  isRequired={true}
                 />
               </FormControl>
               <br />
-              <FormControl id="lastName">
+              <FormControl id="setDescription">
                 <FormLabel>Project Description (Optional)</FormLabel>
                 <Input
                   type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
                 />
               </FormControl>
               <br />

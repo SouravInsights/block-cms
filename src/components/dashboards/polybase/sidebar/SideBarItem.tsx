@@ -19,7 +19,7 @@ export default function SideBarItem({
   active,
   navSize,
   onClick,
-  ...props
+  ...Props
 }: Props) {
   return (
     <Button mt={30}>
@@ -29,10 +29,10 @@ export default function SideBarItem({
       alignItems={navSize == "small" ? "center" : "flex-start"}
       onClick={onClick}
     >
-       <Icon as={icon} fontSize="xl" color={"blackS"} />
-       <Text ml={5} display={navSize == "small" ? "none" : "flex"}>
+       <Icon as={icon} fontSize="xl" color={"black"} />
+           <Text ml={5} display={navSize == "small" ? "none" : "flex"}>
                 {title}
-       </Text>
+           </Text>
       </Flex>
     </Button>
   );
