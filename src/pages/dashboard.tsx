@@ -3,8 +3,8 @@ import { SelectDB } from "../components/commons/sections";
 import { usePolybase, useCollection } from "@polybase/react";
 import { useCurrentUserId } from "@/contexts/common/useCurrentUserId";
 import { useDB } from "@/contexts/common/DBProvider";
-import { AddProject } from "../components/dashboards/Common/AddProject";
-import { Studio } from "../components/dashboards/polybase/index";
+import { AddProject } from "../components/Dashboards/Common/AddProject";
+import { Studio } from "../components/Dashboards/polybase";
 
 const Dashboard = () => {
   const polybase = usePolybase();
